@@ -170,26 +170,32 @@ class Perceptron :
         # on a mistake, be sure to update self.mistakes_
         # professor's solution: 10 lines
         
-        # indent the following debugging code to execute every time you update
-        # you can include code both before and after this block
-        mistakes = int(sum(self.mistakes_))
-        if verbose :
-            print(f'\ttheta^{{({mistakes:d})}} = {self.coef_}')
-        if plot :
-            plot_perceptron(X, y, self, axes_equal=True,
-                            colors=colors[cndx],
-                            label=rf"$\theta^{{({mistakes:d})}}$")
-            
-            # set next color
-            cndx += 1
-            if cndx == len(colors) :
-                cndx = 0
-            
-            # pause
-            plt.draw()
-            keypress = plt.waitforbuttonpress(0) # True if key, False if mouse
-            if not keypress :
-                plot = False
+        while not(np.array_equal(y, self.predict(X))):
+            for i in range(n):
+                if y[i] * np.matmul(np.transpose(self.coef_),X[i]) <= 0:
+                    self.coef_ = self.coef_ + y[i] * X[i]
+                    self.mistakes_[i] += 1
+        
+                    # indent the following debugging code to execute every time you update
+                    # you can include code both before and after this block
+                    mistakes = int(sum(self.mistakes_))
+                    if verbose :
+                        print(f'\ttheta^{{({mistakes:d})}} = {self.coef_}')
+                    if plot :
+                        plot_perceptron(X, y, self, axes_equal=True,
+                                        colors=colors[cndx],
+                                        label=rf"$\theta^{{({mistakes:d})}}$")
+                        
+                        # set next color
+                        cndx += 1
+                        if cndx == len(colors) :
+                            cndx = 0
+                        
+                        # pause
+                        plt.draw()
+                        keypress = plt.waitforbuttonpress(0) # True if key, False if mouse
+                        if not keypress :
+                            plot = False
         
         ### ========== TODO : END ========== ###
         
