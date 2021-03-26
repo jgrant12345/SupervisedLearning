@@ -244,6 +244,17 @@ def main() :
     ### ========== TODO : START ========== ###
     # part b: compare different initializations
     # professor's solution: 4 lines
+
+
+    clf = Perceptron()
+    clf.fit(X_train, y_train, coef_init=np.array([0,0]),
+            verbose=False, plot=False)
+    print(f'simple data\n\tcoef = {clf.coef_}, mistakes = {int(sum(clf.mistakes_)):d}')
+
+    clf = Perceptron()
+    clf.fit(X_train, y_train, coef_init=np.array([1,0]),
+            verbose=False, plot=False)
+    print(f'simple data\n\tcoef = {clf.coef_}, mistakes = {int(sum(clf.mistakes_)):d}')
     
     
     
