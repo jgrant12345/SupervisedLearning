@@ -60,8 +60,8 @@ def get_classifier(clf_str) :
         #   find the parameter for tuning regularization strength
         #   let search values be [1e-5, 1e-4, ..., 1e5] (hint: use np.logspace)
         
-        clf = Perceptron()
-        param_grid = {}
+        clf = Perceptron(penalty = 'l2' ,fit_intercept = True, max_iter = 10000)
+        param_grid = {'alpha': np.logspace(-5,5,num=11)}
         ### ========== END : START ========== ###
     elif clf_str == "logistic regression" :
         ### ========== TODO : START ========== ###
@@ -72,8 +72,8 @@ def get_classifier(clf_str) :
         #    find the parameter for tuning regularization strength
         #    let search values be [1e-5, 1e-4, ..., 1e5] (hint: use np.logspace)
         
-        clf = LogisticRegression()
-        param_grid = {}
+        clf = LogisticRegression(intercept = True, penalty = 'l2', solver = 'lbfgs', max_iter = 10000)
+        param_grid = {'alpha': np.logspace(-5,5,num=11)}
         ### ========== END : START ========== ###
     
     return clf, param_grid
@@ -108,7 +108,22 @@ def get_performance(clf, param_grid, X, y, ntrials=100) :
     # part c: compute average performance using 5x2 cross-validation
     # hint: use StratifiedKFold, GridSearchCV, and cross_validate
     # professor's solution: 6 lines
-    
+    svm = SVC(kernel="rbf")
+
+    for i in range(ntrials):
+
+        inner_cv = StratifiedKFold(n_splits= 2, shuffle=True, random_state= i)
+        outer_cv = StratifiedKFold(n_splits= 5, shuffle=True, random_state= i)
+
+        # Non_nested parameter search and scoring
+        clf = GridSearchCV(estimator = svm, param_grid=param_grid, cv=inner_cv)
+        clf.fit(X, y)
+        non_nested_scores[i] = clf.best_score_
+
+        # Nested CV with parameter optimization
+        cv_results = cross_validate(clf, X = X, y = y, cv=outer_cv)
+        train_scores[i] = cv_results['train_score'][i]
+        test_scores[i] = cv_results['test_score'][i]
     
     
     ### ========== TODO : END ========== ###
@@ -134,8 +149,9 @@ def main() :
     # hints: be sure to set parameters for Perceptron
     #        an easy parameter to miss is tol=None, a much stricter stopping criterion than default
     # professor's solution: 5 lines
-    
-    
+    clf = Perceptron(tol=None, random_state=1234)
+    clf.fit(X_train, y_train)
+    print("Average accuracy is ", clf.score(X_train,y_train))
     
     ### ========== TODO : END ========== ###
     

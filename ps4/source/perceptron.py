@@ -273,8 +273,17 @@ def main() :
     # professor's solution: 4 lines
     
     # compute R^2
-    
+    n,d = X_train.shape
+    maximum = -np.inf
+    for i in range(n):
+        R = np.sqrt(np.sum(X_train[i]**2))
+        if R > maximum:
+            maxmimum = R
     # compute perceptron bound (R / gamma)^2
+    perceptronBound = (R/gamma) ** 2
+    print(perceptronBound)
+    print("R=", R)
+    print("Gamma = ", gamma)
     
     ### ========== TODO : EEND ========== ###
 
