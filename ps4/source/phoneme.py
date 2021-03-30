@@ -72,8 +72,8 @@ def get_classifier(clf_str) :
         #    find the parameter for tuning regularization strength
         #    let search values be [1e-5, 1e-4, ..., 1e5] (hint: use np.logspace)
         
-        clf = LogisticRegression(intercept = True, penalty = 'l2', solver = 'lbfgs', max_iter = 10000)
-        param_grid = {'alpha': np.logspace(-5,5,num=11)}
+        clf = LogisticRegression(fit_intercept = True, penalty = 'l2', solver = 'lbfgs', max_iter = 10000)
+        param_grid = {'C': np.logspace(-5,5,num=11)}
         ### ========== END : START ========== ###
     
     return clf, param_grid
@@ -108,7 +108,6 @@ def get_performance(clf, param_grid, X, y, ntrials=100) :
     # part c: compute average performance using 5x2 cross-validation
     # hint: use StratifiedKFold, GridSearchCV, and cross_validate
     # professor's solution: 6 lines
-    svm = SVC(kernel="rbf")
 
     for i in range(ntrials):
 
@@ -116,14 +115,17 @@ def get_performance(clf, param_grid, X, y, ntrials=100) :
         outer_cv = StratifiedKFold(n_splits= 5, shuffle=True, random_state= i)
 
         # Non_nested parameter search and scoring
-        clf = GridSearchCV(estimator = svm, param_grid=param_grid, cv=inner_cv)
-        clf.fit(X, y)
-        non_nested_scores[i] = clf.best_score_
+        model = GridSearchCV(estimator = clf, param_grid=param_grid, cv=inner_cv)
+        model.fit(X,y)
+        train_scores[i] = model.score(X,y)
 
         # Nested CV with parameter optimization
-        cv_results = cross_validate(clf, X = X, y = y, cv=outer_cv)
-        train_scores[i] = cv_results['train_score'][i]
-        test_scores[i] = cv_results['test_score'][i]
+        nested_score = cross_validate(model, X = X, y = y, cv=outer_cv)
+        test_scores[i] = nested_score['test_score'].mean()
+        # test_scores[i] = nested_score.score(X,y)
+        # train_scores[i] = cv_results['train_score'][i]
+        # test_scores[i] = cv_results['test_score'][i]
+       
     
     
     ### ========== TODO : END ========== ###
