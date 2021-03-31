@@ -116,12 +116,13 @@ def get_performance(clf, param_grid, X, y, ntrials=100) :
 
         # Non_nested parameter search and scoring
         model = GridSearchCV(estimator = clf, param_grid=param_grid, cv=inner_cv)
+        
         model.fit(X,y)
-        train_scores[i] = model.score(X,y)
 
         # Nested CV with parameter optimization
-        nested_score = cross_validate(model, X = X, y = y, cv=outer_cv)
+        nested_score = cross_validate(model, X = X, y = y, cv=outer_cv,return_train_score = True)
         test_scores[i] = nested_score['test_score'].mean()
+        train_scores[i] = nested_score['train_score'].mean()
         # test_scores[i] = nested_score.score(X,y)
         # train_scores[i] = cv_results['train_score'][i]
         # test_scores[i] = cv_results['test_score'][i]
