@@ -60,7 +60,7 @@ def get_classifier(clf_str) :
         #   find the parameter for tuning regularization strength
         #   let search values be [1e-5, 1e-4, ..., 1e5] (hint: use np.logspace)
         
-        clf = Perceptron(penalty = 'l2' ,fit_intercept = True, max_iter = 10000)
+        clf = Perceptron(penalty = 'l2' ,fit_intercept = True, max_iter = 100000)
         param_grid = {'alpha': np.logspace(-5,5,num=11)}
         ### ========== END : START ========== ###
     elif clf_str == "logistic regression" :
@@ -72,7 +72,7 @@ def get_classifier(clf_str) :
         #    find the parameter for tuning regularization strength
         #    let search values be [1e-5, 1e-4, ..., 1e5] (hint: use np.logspace)
         
-        clf = LogisticRegression(fit_intercept = True, penalty = 'l2', solver = 'lbfgs', max_iter = 10000)
+        clf = LogisticRegression(fit_intercept = True, penalty = 'l2', solver = 'lbfgs', max_iter = 100000)
         param_grid = {'C': np.logspace(-5,5,num=11)}
         ### ========== END : START ========== ###
     
@@ -115,9 +115,7 @@ def get_performance(clf, param_grid, X, y, ntrials=100) :
         outer_cv = StratifiedKFold(n_splits= 5, shuffle=True, random_state= i)
 
         # Non_nested parameter search and scoring
-        model = GridSearchCV(estimator = clf, param_grid=param_grid, cv=inner_cv)
-        
-        model.fit(X,y)
+        model = GridSearchCV(estimator = clf, param_grid=param_grid, cv=inner_cv)        
 
         # Nested CV with parameter optimization
         nested_score = cross_validate(model, X = X, y = y, cv=outer_cv,return_train_score = True)
@@ -184,6 +182,7 @@ def main() :
     
     # plot
     df = pd.DataFrame(scores)
+    print(df)
     df = df.melt(id_vars=['classifier', 'fold'], var_name='dataset', value_name='accuracy')
     ax = sns.barplot(data=df, x="dataset", y="accuracy", hue='classifier', ci='sd')
     for p in ax.patches:
@@ -212,6 +211,17 @@ def main() :
     #         df[(df['prof'] == 'wu') & (df['class'] == 'cs158')]['cap']
     # (2) compute t-test via scipy.stats.ttest_rel(...)
     # professor's solution: 5 lines
+    dummy = df[(df['classifier'] == 'dummy') & (df['dataset'] == 'testing')]['accuracy']
+
+    perceptron = df[(df['classifier'] == 'perceptron') & (df['dataset'] == 'testing')]['accuracy']
+
+    logisticRegression = df[(df['classifier'] == 'logistic regression') & (df['dataset'] == 'testing')]['accuracy']
+    print(stats.ttest_rel(dummy,perceptron)[1])
+    print(stats.ttest_rel(dummy,logisticRegression)[1])
+    print(stats.ttest_rel(perceptron,logisticRegression)[1])
+    
+
+
     
     print("significance tests")
     
