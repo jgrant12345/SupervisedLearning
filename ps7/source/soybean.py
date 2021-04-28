@@ -63,7 +63,7 @@ def generate_output_codes(num_classes, code_type) :
             R[index][index] = 1
     else:
         num_classifiers = math.comb(num_classes, 2)
-        R = np.ones((num_classes, num_classifiers))
+        R = np.zeros((num_classes, num_classifiers))
     
 
     ### ========== TODO : END ========== ###
