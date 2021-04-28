@@ -12,6 +12,7 @@ import os
 # data science libraries
 import numpy as np
 import pandas as pd
+import math
 
 # scikit-learn libraries
 from sklearn.svm import SVC
@@ -54,8 +55,17 @@ def generate_output_codes(num_classes, code_type) :
     # part a: generate output codes
     # professor's solution: 13 lines
     # hint: initialize with np.ones(...) and np.zeros(...)
-    
     R = None
+    if code_type == 'ova':
+        num_classifiers = num_classes
+        R = np.full((num_classes, num_classifiers), -1)
+        for index in range(num_classes):
+            R[index][index] = 1
+    else:
+        num_classifiers = math.comb(num_classes, 2)
+        R = np.ones((num_classes, num_classifiers))
+    
+
     ### ========== TODO : END ========== ###
     
     return R
