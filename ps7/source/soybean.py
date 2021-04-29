@@ -61,10 +61,18 @@ def generate_output_codes(num_classes, code_type) :
         R = np.full((num_classes, num_classifiers), -1)
         for index in range(num_classes):
             R[index][index] = 1
-    else:
+    elif code_type == 'ovo':
         num_classifiers = math.comb(num_classes, 2)
         R = np.zeros((num_classes, num_classifiers))
-    
+        pos = 0
+        neg = 1
+        for col in range(num_classifiers):
+            if neg == num_classifiers:
+                pos += 1
+                neg = pos + 1
+            R[neg][col] = -1
+            R[pos][col] = 1
+            neg += 1
 
     ### ========== TODO : END ========== ###
     
@@ -179,15 +187,21 @@ class MulticlassSVM :
         #
         # keep two lists, pos_ndx and neg_ndx, that store indices
         #   of examples to classify as pos / neg for current binary task
+        pos_ndx = []
+        neg_ndx = []
         #
         # for each class C
         # a) find indices for which examples have class equal to C
         #    [use np.nonzero(CONDITION)[0]]
         # b) update pos_ndx and neg_ndx based on output code R[i,j]
         #    where i = class index, j = classifier index
+        for C in classes:
+            np.nonzero(CONDITION)[0]
         #
         # set X_train using X with pos_ndx and neg_ndx
+        X_train = X[]
         # set y_train using y with pos_ndx and neg_ndx
+        y_train = 
         #     y_train should contain only {+1,-1}
         #
         # train the binary classifier
