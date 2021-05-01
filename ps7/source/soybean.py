@@ -195,13 +195,26 @@ class MulticlassSVM :
         #    [use np.nonzero(CONDITION)[0]]
         # b) update pos_ndx and neg_ndx based on output code R[i,j]
         #    where i = class index, j = classifier index
-        for C in classes:
-            np.nonzero(CONDITION)[0]
+        # for classes in num_classes:
+        #     for classifier in num_classifiers:
+        #         if(R[classes][classifier]) == 1:
+        #             pos_ndx.append((,classes))
+       
+        for classifier in num_classifiers:
+            X_train = []
+            y_train = []
+            for data in range(len(y)):
+                oldClass = y[data]
+                newClass = R[classifier][oldClass-1]
+                if newClass != 0:
+                    # Build upon x_train and y_train
+                    # Populate x_train
+            # Train with new x_train and y_train
         #
         # set X_train using X with pos_ndx and neg_ndx
-        X_train = X[]
-        # set y_train using y with pos_ndx and neg_ndx
-        y_train = 
+        # X_train = X[]
+        # # set y_train using y with pos_ndx and neg_ndx
+        # y_train = 
         #     y_train should contain only {+1,-1}
         #
         # train the binary classifier
