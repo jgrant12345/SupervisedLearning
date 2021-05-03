@@ -75,7 +75,6 @@ def generate_output_codes(num_classes, code_type) :
             neg += 1
 
     ### ========== TODO : END ========== ###
-    print(R)
     return R
 
 
@@ -202,20 +201,21 @@ class MulticlassSVM :
         for classifier in range(num_classifiers):
             X_train = []
             y_train = []
+            # iterate over the labels
             for data in range(len(y)):
                 oldClass = y[data]
                 oldClassIndex = 0
+                # find the index
                 for i in classes:
                     if i != oldClass:
                         oldClassIndex += 1
                     else:
                         break
-                newClass = self.R[classifier][oldClassIndex]
+                newClass = self.R[oldClassIndex][classifier]
                 if newClass != 0:
                     X_train.append(X[data])
                     y_train.append(newClass)
-            print(np.unique(y_train))
-            self.svms[classifier].fit(X_train, y_train)
+            self.svms[classifier].fit( X_train, y_train)
         #
         # set X_train using X with pos_ndx and neg_ndx
         # X_train = X[]
@@ -283,7 +283,6 @@ def main() :
     X_test = test_data.drop([label_col], axis=1).to_numpy()
     y_test = test_data[label_col].to_numpy()
     
-    print(np.unique(y_test))
 
     # part a : generate output codes
     # test_output_codes()
@@ -296,16 +295,15 @@ def main() :
     # use generate_output_codes(...) to generate OVA and OVO codes
     R_ova =generate_output_codes(num_classes, 'ova')
     R_ovo = generate_output_codes(num_classes, 'ovo')
-   
+    
     # use load_output_code(...) to load random codes
-     # ???????????????/
-    # R1 = load_output_code('../data/R1.csv')
-    # R2 = load_output_code('../data/R2.csv')
+    R1 = load_output_code('../data/R1.csv')
+    R2 = load_output_code('../data/R2.csv')
 
-    outputArray = [R_ova,R_ovo]
+    outputArray = [R_ova, R_ovo, R1, R2]
 
     for R in outputArray:
-        multiClassSVM = MulticlassSVM(R,C=10, kernel='poly', degree = 4)
+        multiClassSVM = MulticlassSVM(R,C=10, kernel='poly', degree = 4,gamma = 1.0, coef0 = 1.0)
         multiClassSVM.fit(X_train, y_train)
         y_pred = multiClassSVM.predict(X_test)
         differences = 0
@@ -313,6 +311,7 @@ def main() :
             if y_pred[index] != y_test[index]:
                 differences += 1
         print(differences)
+        # print(multiClassSVM.svms[0].support_)
     # for each output code
     #   train a multiclass SVM on training data and evaluate on test data
     #   setup the binary classifiers using the specified parameters from the handout
